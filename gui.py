@@ -5,6 +5,7 @@ class MainUI():
     def __init__(self,window):
         self.width = window.width
         self.height = window.height
+        self.isPlayButtonPressed = False
         self.isScoreButtonPressed = False
         self.isDisplayingScore = False
 
@@ -15,6 +16,12 @@ class MainUI():
         self.quitBtn = graphics.Image(graphics.Point(self.width/2,self.height/2 + 200),'assets/UI/buttons/quitBtn.png')
         self.highScoreBoard = graphics.Image(graphics.Point(self.width/2,self.height/2+100),'assets/backgrounds/backgroundHighscore.png')
         self.scoreTxt = graphics.Text(graphics.Point(self.width/2,self.height/2+100),'')
+
+        """this is in game ui"""
+        self.scoreBanner = graphics.Image(graphics.Point(self.width/2,self.height/self.height+20),'assets/UI/banner.png')
+        self.highscoreBannerText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+20),"HIGH SCORE:")
+        self.highscoreNumberBannerText = graphics.Text(graphics.Point(self.width/2+100,self.height/self.height+20),'')
+        self.updateScoreText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+100),'10')
 
         self.buttonWidth = self.playBtn.getWidth()/2
         self.buttonHeight = self.playBtn.getHeight()/2
@@ -27,6 +34,23 @@ class MainUI():
         self.playBtn.draw(window)
         self.highScoreBtn.draw(window)
         self.quitBtn.draw(window)
+
+        if self.isPlayButtonPressed:
+            self.title.undraw()
+            self.playBtn.undraw()
+            self.highScoreBtn.undraw()
+            self.quitBtn.undraw()
+            self.scoreBanner.draw(window)
+            self.highscoreBannerText.setFill(graphics.color_rgb(255,255,255))
+            self.highscoreBannerText.setSize(15)
+            self.highscoreBannerText.draw(window)
+            self.highscoreNumberBannerText.setFill(graphics.color_rgb(255,255,255))
+            self.highscoreNumberBannerText.setSize(20)
+            self.highscoreNumberBannerText.draw(window)
+            self.updateScoreText.setFill(graphics.color_rgb(255,255,0))
+            self.updateScoreText.setSize(36)
+            self.updateScoreText.draw(window)
+
         if self.isScoreButtonPressed:
             self.isDisplayingScore = True
             self.highScoreBoard.draw(window)
@@ -56,6 +80,7 @@ class MainUI():
 
         if self.isDisplayingScore == False:
             if playAbsX <= self.buttonWidth and playAbsY <= self.buttonHeight:
+                self.isPlayButtonPressed = True
                 return 'play'
             elif highScoreAbsX <= self.buttonWidth and highScoreAbsY <= self.buttonHeight:
                 self.isScoreButtonPressed = True
@@ -72,26 +97,25 @@ class MainUI():
                 datalineNum = dataline[1]
                 num = datalineNum.split('\n')
                 number = int(num[0])
-
                 scores.append(number)
-
             myHighscore = (max(scores))
             myHighscore = str(myHighscore)
             self.scoreFile.close()
             self.scoreTxt.setText(myHighscore)
+            self.highscoreNumberBannerText.setText(myHighscore)
             print('highscore.txt exists! Hightscore: ' + myHighscore)
         else:
             self.scoreFile = open('HighScore.txt', 'a')
             self.scoreFile.write('Score' + '\t' + str(0) + '\n')
             self.scoreFile.close()
             self.scoreTxt.setText(0)
+            self.highscoreNumberBannerText.setText(0)
             print('no highscore.txt, i just created new!')
         return
 
     def display_main_menu(self, window):
         self.mainBackground.draw(window)
         self.draw(window)
-        
         run = True
         while run:
             click = window.getMouse()
@@ -102,7 +126,9 @@ class MainUI():
                 # do score stuff
                 pass
             elif self.returnButton(window, click) == 'play':
+                self.getScore()
                 self.undraw()
+                self.draw(window)
                 run = False
             else:
                 self.isScoreButtonPressed = False
