@@ -61,7 +61,7 @@ class Moth():
         return
 
     def detect_edges(self, window):
-        minHeight = 0 + (self.height / 2)
+        minHeight = 50 + (self.height / 2)
         maxHeight = window.height - (self.height / 2)
         if minHeight < self.y < maxHeight:
             return False

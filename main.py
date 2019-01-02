@@ -9,16 +9,19 @@ moth = characters.Moth(window)
 ui = gui.MainUI(window)
 obstaclesList = list()
 obstaclesList.append(obstacles.Stalagtite(window))
+obstaclesList.append(obstacles.Stalagmite(window))
 
 moth.draw(window)
 for obstacle in obstaclesList:
     obstacle.draw(window)
-ui.display_main_menu(window)
+ui.run_menu(window)
 
 run = True
 while run:
     click = window.checkMouse()
     moth.update(window, click)
+    # SCORE UPDATES HERE
     for obstacle in obstaclesList:
         obstacle.update(window, moth)
+    # UI UPDATES HERE
     time.sleep(.05)
