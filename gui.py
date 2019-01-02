@@ -6,6 +6,7 @@ class MainUI():
         self.width = window.width
         self.height = window.height
         self.isScoreButtonPressed = False
+        self.isDisplayingScore = False
 
         self.mainBackground = graphics.Image(graphics.Point(self.width/2,self.height/2),'assets/backgrounds/backgroundGame.png')
         self.title = graphics.Image(graphics.Point(self.width/2,self.height/2 - 200),'assets/UI/title.png')
@@ -27,6 +28,7 @@ class MainUI():
         self.highScoreBtn.draw(window)
         self.quitBtn.draw(window)
         if self.isScoreButtonPressed:
+            self.isDisplayingScore = True
             self.highScoreBoard.draw(window)
             self.scoreTxt.setFill(graphics.color_rgb(255, 0, 128))
             self.scoreTxt.setSize(36)
@@ -52,14 +54,14 @@ class MainUI():
         quitAbsX = abs(self.quitBtnCenter.x - mouse.x)
         quitAbsY = abs(self.quitBtnCenter.y - mouse.y)
 
-        if playAbsX <= self.buttonWidth and playAbsY <= self.buttonHeight:
-            return 'play'
-        elif highScoreAbsX <= self.buttonWidth and highScoreAbsY <= self.buttonHeight:
-            self.isScoreButtonPressed = True
-            self.getScore()
-            return 'score'
-        elif quitAbsX <= self.buttonWidth and quitAbsY <= self.buttonHeight:
-            quit()
+        if self.isDisplayingScore == False:
+            if playAbsX <= self.buttonWidth and playAbsY <= self.buttonHeight:
+                return 'play'
+            elif highScoreAbsX <= self.buttonWidth and highScoreAbsY <= self.buttonHeight:
+                self.isScoreButtonPressed = True
+                return 'score'
+            elif quitAbsX <= self.buttonWidth and quitAbsY <= self.buttonHeight:
+                quit()
     
     def getScore(self):
         scores = []
@@ -94,9 +96,9 @@ class MainUI():
         while run:
             click = window.getMouse()
             if self.returnButton(window, click) == 'score':
+                self.getScore()
                 self.undraw()
                 self.draw(window)
-                
                 # do score stuff
                 pass
             elif self.returnButton(window, click) == 'play':
@@ -104,6 +106,7 @@ class MainUI():
                 run = False
             else:
                 self.isScoreButtonPressed = False
+                self.isDisplayingScore = False
                 self.undraw()
                 self.draw(window)
         return
