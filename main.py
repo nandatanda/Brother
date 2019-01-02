@@ -15,13 +15,14 @@ moth.draw(window)
 for obstacle in obstaclesList:
     obstacle.draw(window)
 ui.run_menu(window)
+ui.draw_ingame(window)
 
 run = True
 while run:
     click = window.checkMouse()
     moth.update(window, click)
-    # SCORE UPDATES HERE
     for obstacle in obstaclesList:
         obstacle.update(window, moth)
-    # UI UPDATES HERE
+    ui.update_ingame_score(window)
+    ui.update_ingame_banner(window)
     time.sleep(.05)

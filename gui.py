@@ -31,7 +31,6 @@ class MainUI():
         self.highscoreBannerNumberText = graphics.Text(graphics.Point(self.width/2+100,self.height/self.height+20),'')
         self.currentScoreText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+100),'')
 
-
     def draw_menu(self,window):
         self.titleImage.draw(window)
         self.playButton.draw(window)
@@ -46,50 +45,20 @@ class MainUI():
         self.quitButton.undraw()
         return
 
-    def draw_scores(self):
+    def draw_scores(self, window, score):
+        self.titleImage.draw(window)
         self.highScoresBackgroundImage.draw(window)
         self.highScoresText.setFill(graphics.color_rgb(255, 0, 128))
         self.highScoresText.setSize(36)
+        self.highScoresText.setText(score)
         self.highScoresText.draw(window)
         return
 
     def undraw_scores(self):
+        self.titleImage.undraw()
         self.highScoresBackgroundImage.undraw()
-        self.highS
+        self.highScoresText.undraw()
         return
-
-    def run_menu(self, window):
-        self.backgroundImage.draw(window)
-        self.draw_menu(window)
-        run = True
-        while run:
-            click = window.getMouse()
-            if self.get_button_press(window, click) == 'play':
-                self.getScore()
-                self.update_score(20)
-                self.undraw_menu()
-                self.draw_menu(window)
-                run = False
-            elif self.get_button_press(window, click) == 'scores':
-                self.getScore()
-                self.undraw_menu()
-                self.draw_menu(window)
-
-        return
-
-    def draw_ingame_ui(self, window):
-        self.highScoreBanner.draw(window)
-        self.highscoreBannerText.setFill(graphics.color_rgb(255,255,255))
-        self.highscoreBannerText.setSize(15)
-        self.highscoreBannerText.draw(window)
-        self.highscoreBannerNumberText.setFill(graphics.color_rgb(255,255,255))
-        self.highscoreBannerNumberText.setSize(20)
-        self.highscoreBannerNumberText.draw(window)
-        self.currentScoreText.setFill(graphics.color_rgb(255,255,0))
-        self.currentScoreText.setSize(36)
-        self.currentScoreText.draw(window)
-        return
-    
 
     def get_button_press(self, window, mouse):
         dxPlay = abs(self.playButtonAnchor.x - mouse.x)
@@ -108,33 +77,64 @@ class MainUI():
                 return 'scores'
             elif dxQuit <= self.buttonWidth and dyQuit <= self.buttonHeight:
                 quit()
-    
-    def getScore(self):
-        scores = []
-        if os.path.isfile('HighScore.txt'):
-            self.scoreFile = open('HighScore.txt', 'r')
-            for i in self.scoreFile:
-                dataline = i.split('\t')
-                datalineNum = dataline[1]
-                num = datalineNum.split('\n')
-                number = int(num[0])
-                scores.append(number)
-            myHighscore = (max(scores))
-            myHighscore = str(myHighscore)
-            self.scoreFile.close()
-            self.highScoresText.setText(myHighscore)
-            self.highscoreBannerNumberText.setText(myHighscore)
-            print('highscore.txt exists! Hightscore: ' + myHighscore)
-        else:
-            self.scoreFile = open('HighScore.txt', 'a')
-            self.scoreFile.write('scores' + '\t' + str(0) + '\n')
-            self.scoreFile.close()
-            self.highScoresText.setText(0)
-            self.highscoreBannerNumberText.setText(0)
-            print('no highscore.txt, i just created new!')
-        return
-    
-    def update_score(self, currentScore):
-        self.currentScoreText.setText(currentScore)
+
+    def get_high_score(self):
+        with open('HighScore.txt', 'r') as f:
+            scores = [int(line.strip()) for line in f]
+        return str(max(scores))
+
+    def run_menu(self, window):
+        self.backgroundImage.draw(window)
+        self.draw_menu(window)
+        run = True
+        while run:
+            click = window.getMouse()
+            if self.get_button_press(window, click) == 'play':
+                run = False
+                self.undraw_menu()
+            elif self.get_button_press(window, click) == 'scores':
+                score = self.get_high_score()
+                self.undraw_menu()
+                self.draw_scores(window, score)
+                window.getMouse()
+                self.undraw_scores()
+                self.draw_menu(window)
         return
 
+    def draw_ingame(self, window):
+        self.highScoreBanner.draw(window)
+        self.highscoreBannerText.setFill(graphics.color_rgb(255,255,255))
+        self.highscoreBannerText.setSize(15)
+        self.highscoreBannerText.draw(window)
+        self.highscoreBannerNumberText.setFill(graphics.color_rgb(255,255,255))
+        self.highscoreBannerNumberText.setSize(20)
+        self.highscoreBannerNumberText.draw(window)
+        self.currentScoreText.setFill(graphics.color_rgb(255,255,0))
+        self.currentScoreText.setSize(36)
+        self.currentScoreText.draw(window)
+        return
+
+    def undraw_ingame(self):
+        self.highScoreBanner.undraw()
+        self.highscoreBannerText.undraw()
+        self.highscoreBannerNumberText.undraw()
+        self.currentScoreText.undraw()
+        return
+
+    def update_ingame_score(self, window, score=0):
+        self.currentScoreText.undraw()
+        self.currentScoreText.setText(score)
+        self.currentScoreText.draw(window)
+        return
+
+    def update_ingame_banner(self, window):
+        self.highScoreBanner.undraw()
+        self.highscoreBannerText.undraw()
+        self.highscoreBannerNumberText.undraw()
+
+        self.highscoreBannerNumberText.setText(self.get_high_score())
+
+        self.highScoreBanner.draw(window)
+        self.highscoreBannerText.draw(window)
+        self.highscoreBannerNumberText.draw(window)
+        return

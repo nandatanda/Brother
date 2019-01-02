@@ -4,7 +4,7 @@ from random import randint
 class Stalagtite():
     def __init__(self, window):
         self.x = window.getWidth()
-        self.y = 50
+        self.y = 0
         self.velocity = 10
         self.image = graphics.Image(graphics.Point(self.x, self.y), 'assets/obstacles/stalagtite01.gif')
         self.width = self.image.getWidth()
