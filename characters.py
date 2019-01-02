@@ -1,13 +1,18 @@
 import graphics
 
 class Moth():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, window):
+        self.x = window.getWidth() / 2
+        self.y = window.getHeight() / 2
         self.velocity = 0
+        self.speedLimit = 40
+        self.inertia = 3
         self.path = 'assets/moth.gif'
         self.image = graphics.Image(graphics.Point(self.x, self.y), self.path)
+        self.width = self.image.getWidth()
+        self.height = self.image.getHeight()
         self.framesSinceFlap = 0
+        self.isAlive = True
 
     def update(self, window, click):
         self.listen(click)
@@ -15,6 +20,10 @@ class Moth():
         self.accelerate()
         self.move()
         self.draw(window)
+
+        if self.detect_edges(window):
+            self.isAlive = False
+            quit()
 
         self.framesSinceFlap += 1
         return
@@ -26,7 +35,7 @@ class Moth():
 
     def flap(self):
         self.framesSinceFlap = 0
-        self.velocity -= 5
+        self.velocity -= 10
         return
 
     def undraw(self):
@@ -34,8 +43,12 @@ class Moth():
         return
 
     def accelerate(self):
-        dy = int(self.framesSinceFlap / 3)
+        dy = int(self.framesSinceFlap / self.inertia)
         self.velocity += dy
+        if self.velocity > self.speedLimit:
+            self.velocity = self.speedLimit
+        elif self.velocity < -self.speedLimit:
+            self.velocity = -self.speedLimit
         return
 
     def move(self):
@@ -46,3 +59,10 @@ class Moth():
         self.image = graphics.Image(graphics.Point(self.x, self.y), self.path)
         self.image.draw(window)
         return
+
+    def detect_edges(self, window):
+        minHeight = 0 + (self.height / 2)
+        maxHeight = window.height - (self.height / 2)
+        if minHeight < self.y < maxHeight:
+            return False
+        return True
