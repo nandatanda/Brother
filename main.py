@@ -1,12 +1,14 @@
 import graphics
 import characters
+import gui
 import time
 
 window = graphics.GraphWin('Bröther', 525, 700)
 moth = characters.Moth(window)
+ui = gui.MainUI(window)
 
 moth.draw(window)
-window.getMouse()   # menu will go here, approximately
+ui.display_main_menu(window)
 
 run = True
 while run:
