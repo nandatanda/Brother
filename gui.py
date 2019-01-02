@@ -81,7 +81,7 @@ class MainUI():
                 self.draw(window)
                 # do score stuff
                 pass
-            else:
+            elif self.returnButton(window, click) == 'play':
                 self.undraw()
                 run = False
         return
