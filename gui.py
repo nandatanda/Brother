@@ -21,7 +21,7 @@ class MainUI():
         self.scoreBanner = graphics.Image(graphics.Point(self.width/2,self.height/self.height+20),'assets/UI/banner.png')
         self.highscoreBannerText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+20),"HIGH SCORE:")
         self.highscoreNumberBannerText = graphics.Text(graphics.Point(self.width/2+100,self.height/self.height+20),'')
-        self.updateScoreText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+100),'10')
+        self.updateScoreText = graphics.Text(graphics.Point(self.width/2,self.height/self.height+100),'')
 
         self.buttonWidth = self.playBtn.getWidth()/2
         self.buttonHeight = self.playBtn.getHeight()/2
@@ -112,6 +112,10 @@ class MainUI():
             self.highscoreNumberBannerText.setText(0)
             print('no highscore.txt, i just created new!')
         return
+    
+    def updateScore(self, currentScore):
+        self.updateScoreText.setText(currentScore)
+        return
 
     def display_main_menu(self, window):
         self.mainBackground.draw(window)
@@ -127,6 +131,7 @@ class MainUI():
                 pass
             elif self.returnButton(window, click) == 'play':
                 self.getScore()
+                self.updateScore(20)
                 self.undraw()
                 self.draw(window)
                 run = False
